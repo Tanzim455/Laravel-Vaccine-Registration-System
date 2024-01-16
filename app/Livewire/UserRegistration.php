@@ -28,15 +28,19 @@ class UserRegistration extends Component
 $user = User::create($validated);
 //Daily Limit of users preferred vaccine centre
 $perDayLimitOfUsersPreferredVaccineCentre = $user->vaccinecentre->daily_limit;
-
+// dd($perDayLimitOfUsersPreferredVaccineCentre);
 $scheduledDate = Carbon::parse($user->created_at)->addDay(1)->format('Y-m-d');
+dump($scheduledDate);
 
+dump($user->vaccineCentre->id);
 
 //Total schedule in Users preferred vaccine centre
 $totalScheduledInThatDayOfPreferredVaccineCentre = User::where('vaccine_centre_id', $user->vaccineCentre->id)
     ->where('scheduled_date', $scheduledDate)
     ->count();
+    // dd($totalScheduledInThatDayOfPreferredVaccineCentre);
     $scheduledDateIfItsThursday = Carbon::parse($user->created_at)->addDay(3);
+    
 //Scheduled date if its Friday
 $scheduledDateIfItsFriday = Carbon::parse($user->created_at)->addDay(2);
 //Check if the day is Thursday or Friday
@@ -53,6 +57,32 @@ if ($totalScheduledInThatDayOfPreferredVaccineCentre < $perDayLimitOfUsersPrefer
     $user->update([
         'scheduled_date' => $scheduledDate,
     ]);
+}else{
+    $scheduledDatesOfPreferredVaccineCentre = User::where('vaccine_centre_id', $user->vaccine_centre_id)
+    ->pluck('scheduled_date')
+    ->toArray();
+    foreach ($scheduledDatesOfPreferredVaccineCentre as $scheduledDate) {
+        $count = User::where('scheduled_date', $scheduledDate)->count();
+
+        if ($count > $perDayLimitOfUsersPreferredVaccineCentre) {
+            $newScheduledDate = Carbon::createFromFormat('Y-m-d', $scheduledDate);
+
+            if ($newScheduledDate->dayOfWeek === Carbon::THURSDAY) {
+                $newScheduledDate->addDays(3);
+            } elseif ($newScheduledDate->dayOfWeek === Carbon::FRIDAY) {
+                $newScheduledDate->addDays(2);
+            } else {
+                $newScheduledDate->addDay();
+            }
+
+            $user->update([
+                'scheduled_date' => $newScheduledDate->format('Y-m-d')
+            ]);
+
+            break;
+        }
+    }
+   
 }
 
 // Reset the Livewire component state after creating the user
