@@ -23,7 +23,8 @@ class User extends Authenticatable
         'password',
         'nid',
         'phone_number',
-        'vaccine_centre_id'
+        'vaccine_centre_id',
+        'scheduled_date'
     ];
 
     /**
@@ -46,7 +47,7 @@ class User extends Authenticatable
         'password' => 'hashed',
     ];
 
-    public function vaccinecentre(){
+    public function vaccineCentre(){
         return $this->belongsTo(VaccineCentre::class);
     }
 }

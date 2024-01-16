@@ -17,9 +17,12 @@ use Illuminate\Support\Facades\Route;
 */
 
 Route::get('/', function () {
-  $user=User::findOrFail(1);
-$date=$user->created_at->format('Y-m-d');
-   dump($date);
-   dump(Carbon::parse($date)->format('l')==='Tuesday ');
-});
+    User::findOrFail(1)->update([
+      'scheduled_date'=>'2024-01-17'
+    ]);
+    dump(User::findOrFail(1));
+  // $date=Carbon::parse($user->created_at)->addDay(1)->format('Y-m-d');
+  //    dump($date);
+  //    dump(Carbon::parse($date)->format('l')==='Tuesday ');
+  });
  Route::get('register',UserRegistration::class);
