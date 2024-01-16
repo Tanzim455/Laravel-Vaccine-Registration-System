@@ -14,14 +14,15 @@ return new class extends Migration
     {
         Schema::create('users', function (Blueprint $table) {
             $table->id();
-            $table->string('name');
+             $table->string('name');
             $table->string('email')->unique();
             $table->timestamp('email_verified_at')->nullable();
-            $table->string('nid')->unique();
+            $table->bigInteger('nid')->unique();
+
             $table->integer('phone_number')->unique();
             $table->date('scheduled_date')->nullable();
             $table->boolean('is_scheduled')->default(0);
-            $table->foreignId('vaccine_centre_id')->constrained();
+             $table->foreignId('vaccine_centre_id')->constrained();
             $table->rememberToken();
             $table->timestamps();
         });

@@ -13,9 +13,12 @@ class UserRegistration extends Component
 {
     
     
-    public string $email;
+    public   $email;
     
-    public  string   $name;
+    public   $name;
+    public    $nid;
+     public    $phone_number;
+     public    $vaccine_centre_id;
     
     public function save()
     {

@@ -23,8 +23,12 @@ class RegisterRequest extends FormRequest
     {
         return [
             //
-            'name' => ['required', 'string'], 
-            'email'  => ['required', 'string','unique:users'], 
+             'name' => ['required', 'string'], 
+            'email'  => ['required', 'email','unique:users'], 
+            'nid'   => ['required','unique:users'],
+            'phone_number'=>['required'],
+             'vaccine_centre_id'=>['required']
+
         ];
     }
 }
