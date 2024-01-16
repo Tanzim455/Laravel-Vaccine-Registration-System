@@ -28,51 +28,61 @@ class UserRegistration extends Component
 $user = User::create($validated);
 //Daily Limit of users preferred vaccine centre
 $perDayLimitOfUsersPreferredVaccineCentre = $user->vaccinecentre->daily_limit;
-// dd($perDayLimitOfUsersPreferredVaccineCentre);
-$scheduledDate = Carbon::parse($user->created_at)->addDay(1)->format('Y-m-d');
-dump($scheduledDate);
 
-dump($user->vaccineCentre->id);
+$scheduledDate = Carbon::parse($user->created_at)->addDay(1)->format('Y-m-d');
+
 
 //Total schedule in Users preferred vaccine centre
 $totalScheduledInThatDayOfPreferredVaccineCentre = User::where('vaccine_centre_id', $user->vaccineCentre->id)
     ->where('scheduled_date', $scheduledDate)
     ->count();
     // dd($totalScheduledInThatDayOfPreferredVaccineCentre);
-    $scheduledDateIfItsThursday = Carbon::parse($user->created_at)->addDay(3);
+    $scheduledDateIfItsSaturday = Carbon::parse($user->created_at)->addDay(2);
     
 //Scheduled date if its Friday
-$scheduledDateIfItsFriday = Carbon::parse($user->created_at)->addDay(2);
+$scheduledDateIfItsFriday = Carbon::parse($user->created_at)->addDay(3);
 //Check if the day is Thursday or Friday
 $specificDayOfScheduledDate = Carbon::parse($scheduledDate)->format('l');
-$itsThursday = $specificDayOfScheduledDate === 'Thursday';
+// $itsThursday = $specificDayOfScheduledDate === 'Thursday';
 $itsFriday = $specificDayOfScheduledDate === 'Friday'; 
+$itsSaturday = $specificDayOfScheduledDate === 'Saturday'; 
 if ($totalScheduledInThatDayOfPreferredVaccineCentre < $perDayLimitOfUsersPreferredVaccineCentre) {
     // Set the scheduled_date during user creation
-    if ($itsThursday) {
-        $scheduledDate = $scheduledDateIfItsThursday;
-    } elseif ($itsFriday) {
+    if ($itsFriday) {
         $scheduledDate = $scheduledDateIfItsFriday;
+    } elseif ($itsSaturday) {
+        $scheduledDate = $scheduledDateIfItsSaturday;
     }
     $user->update([
         'scheduled_date' => $scheduledDate,
     ]);
 }else{
+    // dd("It has exceeded the capacity");
+    //Check if a date greater than the scheduled date exists
+    // $date_greater_than_schedule_day_exists=User::where('vaccine_centre_id', $user->vaccine_centre_id)
+    // ->where('scheduled_date','>',$scheduledDate)->exists();
+  
     $scheduledDatesOfPreferredVaccineCentre = User::where('vaccine_centre_id', $user->vaccine_centre_id)
     ->pluck('scheduled_date')
     ->toArray();
+    // dd($scheduledDatesOfPreferredVaccineCentre);
+//    dd($scheduledDatesOfPreferredVaccineCentre);
+// $count = User::where('scheduled_date', '2024-01-17')
+// ->where('vaccine_centre_id', $user->vaccine_centre_id)
+// ->count();
+// dd($count);
     foreach ($scheduledDatesOfPreferredVaccineCentre as $scheduledDate) {
-        $count = User::where('scheduled_date', $scheduledDate)->count();
-
-        if ($count > $perDayLimitOfUsersPreferredVaccineCentre) {
-            $newScheduledDate = Carbon::createFromFormat('Y-m-d', $scheduledDate);
-
-            if ($newScheduledDate->dayOfWeek === Carbon::THURSDAY) {
-                $newScheduledDate->addDays(3);
-            } elseif ($newScheduledDate->dayOfWeek === Carbon::FRIDAY) {
+        
+        $count = User::where('scheduled_date', '2024-01-17')->count();
+            dd($count);
+            break;
+        if ($count !== $perDayLimitOfUsersPreferredVaccineCentre) {
+            $newScheduledDate = Carbon::parse($scheduledDate)->addDays(1);
+                
+            if ($newScheduledDate->format("l") ==='Friday') {
                 $newScheduledDate->addDays(2);
-            } else {
-                $newScheduledDate->addDay();
+            } elseif ($newScheduledDate->format("l") ==='Saturday') {
+                $newScheduledDate->addDays(1);
             }
 
             $user->update([
@@ -80,8 +90,12 @@ if ($totalScheduledInThatDayOfPreferredVaccineCentre < $perDayLimitOfUsersPrefer
             ]);
 
             break;
+        }else{
+            dd("Sorry it has exceeded the limit");
         }
+        // dump($scheduledDate) ;
     }
+
    
 }
 
