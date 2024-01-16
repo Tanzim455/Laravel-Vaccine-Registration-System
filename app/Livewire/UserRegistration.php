@@ -26,19 +26,30 @@ class UserRegistration extends Component
         $validated = $this->validate();
 
 $user = User::create($validated);
-
+//Daily Limit of users preferred vaccine centre
 $perDayLimitOfUsersPreferredVaccineCentre = $user->vaccinecentre->daily_limit;
 
 $scheduledDate = Carbon::parse($user->created_at)->addDay(1)->format('Y-m-d');
 
 
-
+//Total schedule in Users preferred vaccine centre
 $totalScheduledInThatDayOfPreferredVaccineCentre = User::where('vaccine_centre_id', $user->vaccineCentre->id)
     ->where('scheduled_date', $scheduledDate)
     ->count();
-
+    $scheduledDateIfItsThursday = Carbon::parse($user->created_at)->addDay(3);
+//Scheduled date if its Friday
+$scheduledDateIfItsFriday = Carbon::parse($user->created_at)->addDay(2);
+//Check if the day is Thursday or Friday
+$specificDayOfScheduledDate = Carbon::parse($scheduledDate)->format('l');
+$itsThursday = $specificDayOfScheduledDate === 'Thursday';
+$itsFriday = $specificDayOfScheduledDate === 'Friday'; 
 if ($totalScheduledInThatDayOfPreferredVaccineCentre < $perDayLimitOfUsersPreferredVaccineCentre) {
     // Set the scheduled_date during user creation
+    if ($itsThursday) {
+        $scheduledDate = $scheduledDateIfItsThursday;
+    } elseif ($itsFriday) {
+        $scheduledDate = $scheduledDateIfItsFriday;
+    }
     $user->update([
         'scheduled_date' => $scheduledDate,
     ]);
