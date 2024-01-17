@@ -37,13 +37,30 @@ Route::get('/', function () {
   //    dump(Carbon::parse($date)->format('l')==='Tuesday ');
 //   $vaccine_centre_limit=VaccineCentre::findOrFail(2)->daily_limit;
 //   dump($vaccine_centre_limit);
+// $collection = collect([10,40,60,90]);
+// dd($collection->max());
 $user=User::select('vaccine_centre_id', 'scheduled_date')
 ->where('vaccine_centre_id', 2)
+->where('scheduled_date','>',Carbon::parse(Carbon::now())->format('Y-m-d'))
 ->groupBy('vaccine_centre_id', 'scheduled_date')
 ->selectRaw('COUNT(*) as count')
 ->get();
-      foreach($user as $u){
-        dump($u->count);
-      }
+ dump($user);
+ //Find vaccine centre limit 
+ 
+    //   foreach($user as $u){
+    //     // $array=[];
+    //     // array_push($array,$u->scheduled_date);
+    //     // dd($array);
+    //     $collection = collect([]);
+    //     $collection->push($u->scheduled_date);
+    //     dd($collection);
+    //   }
+$date=Carbon::now();
+dump(Carbon::parse($date)->format('Y-m-d'));
+//Add one day
+$add_one_day=Carbon::parse($date)->addDays(1)->format('Y-m-d');
+dd($add_one_day);
+// dump($add_one_day<$date);
   });
  Route::get('register',UserRegistration::class);

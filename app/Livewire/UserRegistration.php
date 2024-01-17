@@ -57,57 +57,70 @@ if ($totalScheduledInThatDayOfPreferredVaccineCentre < $perDayLimitOfUsersPrefer
         'scheduled_date' => $scheduledDate,
     ]);
 }else{
-    // dd("It has exceeded the capacity");
-    //Check if a date greater than the scheduled date exists
-    // $date_greater_than_schedule_day_exists=User::where('vaccine_centre_id', $user->vaccine_centre_id)
-    // ->where('scheduled_date','>',$scheduledDate)->exists();
-  
-    $scheduledDatesOfPreferredVaccineCentre = User::where('vaccine_centre_id', $user->vaccine_centre_id)
-    ->pluck('scheduled_date')
-    ->toArray();
-    // dd($scheduledDatesOfPreferredVaccineCentre);
-//    dd($scheduledDatesOfPreferredVaccineCentre);
-// $count = User::where('scheduled_date', '2024-01-17')
-// ->where('vaccine_centre_id', $user->vaccine_centre_id)
-// ->count();
-// dd($count);
-    foreach ($scheduledDatesOfPreferredVaccineCentre as $scheduledDate) {
-        
-        $count = User::where('scheduled_date', '2024-01-17')->count();
-            dd($count);
-            break;
-        if ($count !== $perDayLimitOfUsersPreferredVaccineCentre) {
-            $newScheduledDate = Carbon::parse($scheduledDate)->addDays(1);
-                
-            if ($newScheduledDate->format("l") ==='Friday') {
-                $newScheduledDate->addDays(2);
-            } elseif ($newScheduledDate->format("l") ==='Saturday') {
-                $newScheduledDate->addDays(1);
-            }
+    $countOfScheduledVaccineCentresbyDate=User::select('vaccine_centre_id', 'scheduled_date')
+  ->where('vaccine_centre_id',$user->VaccineCentre->id)
+  ->where('scheduled_date','>',Carbon::parse(Carbon::now())->format('Y-m-d'))
+  ->groupBy('vaccine_centre_id', 'scheduled_date')
+  ->selectRaw('COUNT(*) as count')
+  ->get();
 
+  foreach($countOfScheduledVaccineCentresbyDate as $count){
+    $found=false;
+     if($count->count !== $perDayLimitOfUsersPreferredVaccineCentre){
+            $found=true;
+            $collection = collect([]);
+            $collection->push($count->scheduled_date);
+            $earliest_date=$collection->min();
+            //Update with this date
+            $formatted_date=Carbon::parse($earliest_date)->format('Y-m-d');
             $user->update([
-                'scheduled_date' => $newScheduledDate->format('Y-m-d')
+                'scheduled_date' =>$formatted_date,
             ]);
 
-            break;
-        }else{
-            dd("Sorry it has exceeded the limit");
-        }
-        // dump($scheduledDate) ;
-    }
+     }
 
-   
+     if(!$found){
+        $newcollection=collect([]);
+        $newcollection->push($count->scheduled_date);
+        $latest_date=$newcollection->max();
+        $scheduledDate = Carbon::parse($latest_date)->addDay(1)->format('Y-m-d');
+        
+         $specificDayOfScheduledDate = Carbon::parse($scheduledDate)->format('l');
+       
+    //     //Check whether the date is Friday or Saturday
+         $itsFriday = $specificDayOfScheduledDate === 'Friday'; 
+         $itsSaturday = $specificDayOfScheduledDate === 'Saturday'; 
+    //     //Add One day and avoid Friday saturday
+    //     //Scheduled date if its Friday
+        $scheduledDateIfItsFriday = Carbon::parse($scheduledDate)->addDay(2)->format('Y-m-d');
+        $scheduledDateIfItsSaturday = Carbon::parse($scheduledDate)->addDay(2)->format('Y-m-d');
+       if(!$itsFriday || !$itsSaturday){
+        $user->update([
+            'scheduled_date' => $scheduledDate,
+        ]);
+       }
+
+       if($itsFriday){
+        $user->update([
+            'scheduled_date' =>$scheduledDateIfItsFriday,
+        ]);
+       }
+       if($itsSaturday){
+        $user->update([
+            'scheduled_date' =>$scheduledDateIfItsSaturday,
+        ]);
+       }
+    
+     }
+  }
+    }
+    $this->reset();
+    session()->flash('success', 'You have been successfully registered.Soon you will get an email with confirmation date');
 }
 
 // Reset the Livewire component state after creating the user
-$this->reset();
 
-        session()->flash('success', 'You have been successfully registered.Soon you will get an email with confirmation date');
-        
-
-    }
- 
-    protected function rules(): array
+protected function rules(): array
     {
         return (new RegisterRequest())->rules();
     }
@@ -122,5 +135,11 @@ $this->reset();
         $vaccineCentres=VaccineCentre::select('id','name','daily_limit')->get();
         return view('livewire.user-registration',compact('vaccineCentres'));
     }
+        
+        
+
+    }
+ 
     
-}
+    
+
