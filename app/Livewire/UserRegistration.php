@@ -37,10 +37,10 @@ $totalScheduledInThatDayOfPreferredVaccineCentre = User::where('vaccine_centre_i
     ->where('scheduled_date', $scheduledDate)
     ->count();
     // dd($totalScheduledInThatDayOfPreferredVaccineCentre);
-    $scheduledDateIfItsSaturday = Carbon::parse($user->created_at)->addDay(2);
+    $scheduledDateIfItsSaturday = Carbon::parse($scheduledDate)->addDay(1);
     
 //Scheduled date if its Friday
-$scheduledDateIfItsFriday = Carbon::parse($user->created_at)->addDay(3);
+$scheduledDateIfItsFriday = Carbon::parse($scheduledDate)->addDay(2);
 //Check if the day is Thursday or Friday
 $specificDayOfScheduledDate = Carbon::parse($scheduledDate)->format('l');
 // $itsThursday = $specificDayOfScheduledDate === 'Thursday';
