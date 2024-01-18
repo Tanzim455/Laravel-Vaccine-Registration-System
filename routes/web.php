@@ -20,27 +20,5 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-Route::get('/', function () {
-    // $day = Carbon::parse(Carbon::now()->format('Y-m-d'));
-    //     //Find all schedule dates greater than current date
-    //     $scheduled_dates = User::where('scheduled_date', '>', $day)->pluck('scheduled_date');
-    //     // dd($scheduled_dates);
-    //     //Find earliest date from them
-    //      $min=$scheduled_dates->min();
-         
-    //     //  dd($min);
-    //      //Find out all users who are scheduled earlist from today
-    //      $users=User::where('is_scheduled',0)
-    //      ->where('scheduled_date','=',$min)
-    //      ->get();
-    //      dd($users);
-          
-    //      foreach($users as $user){
-    //         Mail::to($user->email)->queue(new VaccineSchedule(user:$user));
-    //         $user->is_scheduled=true;
-    //         $user->save();
-    //      }
-    VaccineScheduleJob::dispatch();
-   
-  });
- Route::get('register',UserRegistration::class);
+
+ Route::get('/',UserRegistration::class);
