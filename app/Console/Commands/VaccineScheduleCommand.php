@@ -3,9 +3,13 @@
 namespace App\Console\Commands;
 
 use App\Jobs\VaccineScheduleJob;
+use App\Mail\VaccineSchedule;
+use App\Models\User;
+use Carbon\Carbon;
 use Illuminate\Console\Command;
+use Illuminate\Support\Facades\Mail;
 
-class VaccineSchedule extends Command
+class VaccineScheduleCommand extends Command
 {
     /**
      * The name and signature of the console command.
@@ -26,8 +30,7 @@ class VaccineSchedule extends Command
      */
     public function handle()
     {
-        //
-         VaccineScheduleJob::dispatch();
         
+        VaccineScheduleJob::dispatch();
     }
 }
