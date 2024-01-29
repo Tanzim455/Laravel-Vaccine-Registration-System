@@ -24,8 +24,8 @@ class RegisterRequest extends FormRequest
         return [
             //
              'name' => ['required', 'string'], 
-            'email'  => ['required', 'email'], 
-             'nid'   => ['required'],
+            'email'  => ['required', 'email','unique:user_vaccine_registrations'], 
+             'nid'   => ['required','integer','unique:user_vaccine_registrations'],
              'phone_number'=>['required'],
               'vaccine_centre_id'=>['required']
 
