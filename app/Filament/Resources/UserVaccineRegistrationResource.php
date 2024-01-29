@@ -6,6 +6,7 @@ use App\Filament\Resources\UserVaccineRegistrationResource\Pages;
 use App\Models\UserVaccineRegistration;
 use Carbon\Carbon;
 use Filament\Forms;
+use Filament\Forms\Components\Select;
 use Filament\Forms\Form;
 use Filament\Resources\Resource;
 use Filament\Tables;
@@ -23,9 +24,9 @@ class UserVaccineRegistrationResource extends Resource
     {
         return $form
             ->schema([
-                Forms\Components\TextInput::make('vaccine_centre_id')
-                    ->required()
-                    ->numeric(),
+                Select::make('vaccine_centre_id')
+                    ->relationship('vaccineCentre','name')
+                    ->required(),
                 Forms\Components\TextInput::make('name')
                     ->required()
                     ->maxLength(255),
@@ -33,7 +34,7 @@ class UserVaccineRegistrationResource extends Resource
                     ->email()
                     ->required()
                     ->maxLength(255),
-                Forms\Components\DateTimePicker::make('email_verified_at'),
+                // Forms\Components\DateTimePicker::make('email_verified_at'),
                 Forms\Components\TextInput::make('nid')
                     ->required()
                     ->numeric(),
@@ -41,9 +42,9 @@ class UserVaccineRegistrationResource extends Resource
                     ->tel()
                     ->required()
                     ->numeric(),
-                Forms\Components\DatePicker::make('scheduled_date'),
-                Forms\Components\Toggle::make('is_scheduled')
-                    ->required(),
+                // Forms\Components\DatePicker::make('scheduled_date'),
+                // Forms\Components\Toggle::make('is_scheduled')
+                //     ->required(),
             ]);
     }
 
@@ -51,8 +52,8 @@ class UserVaccineRegistrationResource extends Resource
     {
         return $table
             ->columns([
-                Tables\Columns\TextColumn::make('vaccine_centre_id')
-                    ->numeric()
+                Tables\Columns\TextColumn::make('vaccineCentre.name')
+                
 
                     ->sortable(),
 
@@ -60,9 +61,9 @@ class UserVaccineRegistrationResource extends Resource
                     ->searchable(),
                 Tables\Columns\TextColumn::make('email')
                     ->searchable(),
-                Tables\Columns\TextColumn::make('email_verified_at')
-                    ->dateTime()
-                    ->sortable(),
+                // Tables\Columns\TextColumn::make('email_verified_at')
+                //     ->dateTime()
+                //     ->sortable(),
                 Tables\Columns\TextColumn::make('nid')
                     ->numeric()
                     ->sortable(),
@@ -74,14 +75,14 @@ class UserVaccineRegistrationResource extends Resource
                     ->sortable(),
                 Tables\Columns\IconColumn::make('is_scheduled')
                     ->boolean(),
-                Tables\Columns\TextColumn::make('created_at')
-                    ->dateTime()
-                    ->sortable()
-                    ->toggleable(isToggledHiddenByDefault: true),
-                Tables\Columns\TextColumn::make('updated_at')
-                    ->dateTime()
-                    ->sortable()
-                    ->toggleable(isToggledHiddenByDefault: true),
+                // Tables\Columns\TextColumn::make('created_at')
+                //     ->dateTime()
+                //     ->sortable()
+                //     ->toggleable(isToggledHiddenByDefault: true),
+                // Tables\Columns\TextColumn::make('updated_at')
+                //     ->dateTime()
+                //     ->sortable()
+                //     ->toggleable(isToggledHiddenByDefault: true),
             ])
             ->filters([
                 //
