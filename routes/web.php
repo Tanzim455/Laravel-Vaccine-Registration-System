@@ -17,8 +17,4 @@ use Illuminate\Support\Facades\Route;
 
 Route::get('/', UserRegistration::class);
 
-Route::get('testdate', function () {
-    $current_date = Carbon::now()->format('Y-m-d');
-    $registered_date = '2024-01-30';
-    dd($registered_date > $current_date);
-});
+
