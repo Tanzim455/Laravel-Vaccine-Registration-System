@@ -4,6 +4,7 @@ namespace App\Jobs;
 
 use App\Mail\VaccineSchedule;
 use App\Models\User;
+use App\Models\UserVaccineRegistration;
 use Carbon\Carbon;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldBeUnique;
@@ -30,18 +31,9 @@ class VaccineScheduleJob implements ShouldQueue
      */
     public function handle(): void
     {
-        //
-        $day = Carbon::parse(Carbon::now()->format('Y-m-d'));
-        //Find all schedule dates greater than current date
-        $scheduled_dates = User::where('scheduled_date', '>', $day)->pluck('scheduled_date');
-        // dd($scheduled_dates);
-        //Find earliest date from them
-         $min=$scheduled_dates->min();
+        
+         $users=UserVaccineRegistration::where('is_scheduled',0)
          
-        //  dd($min);
-         //Find out all users who are scheduled earlist from today
-         $users=User::where('is_scheduled',0)
-         ->where('scheduled_date','=',$min)
          ->get();
         //  dd($users);
           

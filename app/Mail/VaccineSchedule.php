@@ -3,6 +3,7 @@
 namespace App\Mail;
 
 use App\Models\User;
+use App\Models\UserVaccineRegistration;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Mail\Mailable;
@@ -17,7 +18,7 @@ class VaccineSchedule extends Mailable
     /**
      * Create a new message instance.
      */
-    public function __construct(public User $user)
+    public function __construct(public UserVaccineRegistration $user)
     {
         //
     }

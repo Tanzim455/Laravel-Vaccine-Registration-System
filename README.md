@@ -35,5 +35,5 @@ VaccineCentre::factory(10)->create();
 ```
 ## 7.Send the emails with schedule
 ```
-From cli run php artisan schedule:run
+From cli run php artisan schedule:work
 ```
