@@ -37,3 +37,17 @@ VaccineCentre::factory(10)->create();
 ```
 From cli run php artisan schedule:work
 ```
+## 8.Create user with email and password from factory
+```
+From cli run php artisan tinker then run User::factory(10)->create() as many as you want 
+```
+## 9.Just go to admin/login a login page will appear enter the credentials in your factory 
+```
+After entering the admin dashboard on left you will see UserVaccineRegistrations below 
+dashboard
+```
+## 10.On right hand side you will see just beside the search input an icon for filter which contains 3 filters
+```
+Registered-Register but did not yet get a schedule
+Scheduled-Scheduled but the dates are greater than present date 
+Vaccinated-Vaccinated but the schedule_date is less than present date
