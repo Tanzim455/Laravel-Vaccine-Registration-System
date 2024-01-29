@@ -21,10 +21,6 @@ class User extends Authenticatable
         'name',
         'email',
         'password',
-        'nid',
-        'phone_number',
-        'vaccine_centre_id',
-        'scheduled_date'
     ];
 
     /**
@@ -46,8 +42,4 @@ class User extends Authenticatable
         'email_verified_at' => 'datetime',
         'password' => 'hashed',
     ];
-
-    public function vaccineCentre(){
-        return $this->belongsTo(VaccineCentre::class);
-    }
 }

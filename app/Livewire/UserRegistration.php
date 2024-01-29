@@ -4,6 +4,7 @@ namespace App\Livewire;
 
 use App\Http\Requests\RegisterRequest;
 use App\Models\User;
+use App\Models\UserVaccineRegistration;
 use App\Models\VaccineCentre;
 use Carbon\Carbon;
 use Illuminate\Validation\Rule;
@@ -25,15 +26,16 @@ class UserRegistration extends Component
     {
         $validated = $this->validate();
 
-$user = User::create($validated);
-//Daily Limit of users preferred vaccine centre
+  $user=UserVaccineRegistration::create($validated);
+// //Daily Limit of users preferred vaccine centre
+// dd($user);
 $perDayLimitOfUsersPreferredVaccineCentre = $user->vaccinecentre->daily_limit;
-
+// dd($perDayLimitOfUsersPreferredVaccineCentre);
 $scheduledDate = Carbon::parse($user->created_at)->addDay(1)->format('Y-m-d');
 
 
 //Total schedule in Users preferred vaccine centre
-$totalScheduledInThatDayOfPreferredVaccineCentre = User::where('vaccine_centre_id', $user->vaccineCentre->id)
+$totalScheduledInThatDayOfPreferredVaccineCentre = UserVaccineRegistration::where('vaccine_centre_id', $user->vaccineCentre->id)
     ->where('scheduled_date', $scheduledDate)
     ->count();
     // dd($totalScheduledInThatDayOfPreferredVaccineCentre);
@@ -57,7 +59,7 @@ if ($totalScheduledInThatDayOfPreferredVaccineCentre < $perDayLimitOfUsersPrefer
         'scheduled_date' => $scheduledDate,
     ]);
 }else{
-    $countOfScheduledVaccineCentresbyDate=User::select('vaccine_centre_id', 'scheduled_date')
+    $countOfScheduledVaccineCentresbyDate=UserVaccineRegistration::select('vaccine_centre_id', 'scheduled_date')
   ->where('vaccine_centre_id',$user->VaccineCentre->id)
   ->where('scheduled_date','>',Carbon::parse(Carbon::now())->format('Y-m-d'))
   ->groupBy('vaccine_centre_id', 'scheduled_date')
@@ -114,10 +116,10 @@ if ($totalScheduledInThatDayOfPreferredVaccineCentre < $perDayLimitOfUsersPrefer
      }
   }
     }
-    $this->reset();
-    session()->flash('success', 'You have been successfully registered.Soon you will get an email with confirmation date');
-}
-
+     $this->reset();
+     session()->flash('success', 'You have been successfully registered.Soon you will get an email with confirmation date');
+// }
+    }
 // Reset the Livewire component state after creating the user
 
 protected function rules(): array
