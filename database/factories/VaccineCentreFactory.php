@@ -18,8 +18,8 @@ class VaccineCentreFactory extends Factory
     {
         return [
             //
-            'name'=>fake()->name,
-             'daily_limit'=>fake()->numberBetween(1,20)
+            'name' => fake()->name,
+            'daily_limit' => fake()->numberBetween(1, 20),
         ];
     }
 }

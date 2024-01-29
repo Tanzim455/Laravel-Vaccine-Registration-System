@@ -3,9 +3,7 @@
 namespace App\Filament\Resources;
 
 use App\Filament\Resources\UserVaccineRegistrationResource\Pages;
-use App\Filament\Resources\UserVaccineRegistrationResource\RelationManagers;
 use App\Models\UserVaccineRegistration;
-use App\Models\VaccineCentre;
 use Carbon\Carbon;
 use Filament\Forms;
 use Filament\Forms\Form;
@@ -14,7 +12,6 @@ use Filament\Tables;
 use Filament\Tables\Filters\Filter;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
-use Illuminate\Database\Eloquent\SoftDeletingScope;
 
 class UserVaccineRegistrationResource extends Resource
 {
@@ -56,10 +53,9 @@ class UserVaccineRegistrationResource extends Resource
             ->columns([
                 Tables\Columns\TextColumn::make('vaccine_centre_id')
                     ->numeric()
-                    
+
                     ->sortable(),
-                    
-                    
+
                 Tables\Columns\TextColumn::make('name')
                     ->searchable(),
                 Tables\Columns\TextColumn::make('email')
@@ -90,26 +86,26 @@ class UserVaccineRegistrationResource extends Resource
             ->filters([
                 //
                 Filter::make('Registered')
-                ->query(fn (Builder $query): Builder => $query->where('is_scheduled', false)),
+                    ->query(fn (Builder $query): Builder => $query->where('is_scheduled', false)),
                 Filter::make('Scheduled')
-                ->query(fn (Builder $query): Builder => $query->where('is_scheduled', true)
-                ->where('scheduled_date','>',Carbon::now()->format('Y-m-d')),
-                
-            ),
-            Filter::make('Vaccinated')
-            ->query(fn (Builder $query): Builder => $query->where('is_scheduled', true)
-            ->where('scheduled_date','<',Carbon::now()->format('Y-m-d')),
-            
-        ),
+                    ->query(fn (Builder $query): Builder => $query->where('is_scheduled', true)
+                        ->where('scheduled_date', '>', Carbon::now()->format('Y-m-d')),
+
+                    ),
+                Filter::make('Vaccinated')
+                    ->query(fn (Builder $query): Builder => $query->where('is_scheduled', true)
+                                ->where('scheduled_date', '<', Carbon::now()->format('Y-m-d')),
+
+                    ),
             ])
             ->actions([
-                Tables\Actions\EditAction::make(),
-            ])
+                            Tables\Actions\EditAction::make(),
+                        ])
             ->bulkActions([
-                Tables\Actions\BulkActionGroup::make([
-                    Tables\Actions\DeleteBulkAction::make(),
-                ]),
-            ]);
+                            Tables\Actions\BulkActionGroup::make([
+                                Tables\Actions\DeleteBulkAction::make(),
+                            ]),
+                        ]);
     }
 
     public static function getRelations(): array

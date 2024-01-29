@@ -2,7 +2,6 @@
 
 namespace App\Console;
 
-use App\Console\Commands\VaccineSchedule;
 use App\Console\Commands\VaccineScheduleCommand;
 use Illuminate\Console\Scheduling\Schedule;
 use Illuminate\Foundation\Console\Kernel as ConsoleKernel;
@@ -13,11 +12,12 @@ class Kernel extends ConsoleKernel
      * Define the application's command schedule.
      */
     protected $commands = [
-        VaccineScheduleCommand::class
+        VaccineScheduleCommand::class,
     ];
+
     protected function schedule(Schedule $schedule): void
     {
-         $schedule->command('app:vaccine-schedule')->everyMinute();
+        $schedule->command('app:vaccine-schedule')->everyMinute();
     }
 
     /**

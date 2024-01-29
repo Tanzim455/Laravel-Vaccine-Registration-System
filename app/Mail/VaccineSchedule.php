@@ -2,10 +2,8 @@
 
 namespace App\Mail;
 
-use App\Models\User;
 use App\Models\UserVaccineRegistration;
 use Illuminate\Bus\Queueable;
-use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Mail\Mailable;
 use Illuminate\Mail\Mailables\Content;
 use Illuminate\Mail\Mailables\Envelope;
@@ -40,10 +38,10 @@ class VaccineSchedule extends Mailable
     {
         return new Content(
             markdown: 'mail.vaccine.index',
-            with:[
-               'name'=>$this->user->name,
-                'scheduled_date'=>$this->user->scheduled_date,
-                'vaccineCentre'=>$this->user->vaccineCentre->name
+            with: [
+                'name' => $this->user->name,
+                'scheduled_date' => $this->user->scheduled_date,
+                'vaccineCentre' => $this->user->vaccineCentre->name,
             ]
         );
     }

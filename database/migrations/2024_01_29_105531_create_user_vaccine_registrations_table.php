@@ -21,7 +21,7 @@ return new class extends Migration
             $table->integer('phone_number')->unique();
             $table->date('scheduled_date')->nullable();
             $table->boolean('is_scheduled')->default(0);
-             $table->foreignId('vaccine_centre_id')->constrained();
+            $table->foreignId('vaccine_centre_id')->constrained();
             $table->rememberToken();
             $table->timestamps();
         });

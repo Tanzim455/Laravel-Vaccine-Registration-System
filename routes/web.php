@@ -1,12 +1,7 @@
 <?php
 
-use App\Jobs\VaccineScheduleJob;
 use App\Livewire\UserRegistration;
-use App\Mail\VaccineSchedule;
-use App\Models\User;
-use App\Models\VaccineCentre;
 use Carbon\Carbon;
-use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -20,11 +15,10 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
+Route::get('/', UserRegistration::class);
 
- Route::get('/',UserRegistration::class);
-
- Route::get('testdate',function(){
-      $current_date=Carbon::now()->format('Y-m-d');
-      $registered_date='2024-01-30';
-      dd($registered_date>$current_date);
- });
+Route::get('testdate', function () {
+    $current_date = Carbon::now()->format('Y-m-d');
+    $registered_date = '2024-01-30';
+    dd($registered_date > $current_date);
+});

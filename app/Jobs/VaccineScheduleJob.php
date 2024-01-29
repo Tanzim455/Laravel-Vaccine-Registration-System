@@ -3,11 +3,8 @@
 namespace App\Jobs;
 
 use App\Mail\VaccineSchedule;
-use App\Models\User;
 use App\Models\UserVaccineRegistration;
-use Carbon\Carbon;
 use Illuminate\Bus\Queueable;
-use Illuminate\Contracts\Queue\ShouldBeUnique;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Queue\InteractsWithQueue;
@@ -31,16 +28,15 @@ class VaccineScheduleJob implements ShouldQueue
      */
     public function handle(): void
     {
-        
-         $users=UserVaccineRegistration::where('is_scheduled',0)
-         
-         ->get();
+
+        $users = UserVaccineRegistration::where('is_scheduled', 0)
+            ->get();
         //  dd($users);
-          
-         foreach($users as $user){
-            Mail::to($user->email)->queue(new VaccineSchedule(user:$user));
-            $user->is_scheduled=true;
+
+        foreach ($users as $user) {
+            Mail::to($user->email)->queue(new VaccineSchedule(user: $user));
+            $user->is_scheduled = true;
             $user->save();
-         }
+        }
     }
 }

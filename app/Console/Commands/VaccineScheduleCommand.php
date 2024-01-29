@@ -3,11 +3,7 @@
 namespace App\Console\Commands;
 
 use App\Jobs\VaccineScheduleJob;
-use App\Mail\VaccineSchedule;
-use App\Models\User;
-use Carbon\Carbon;
 use Illuminate\Console\Command;
-use Illuminate\Support\Facades\Mail;
 
 class VaccineScheduleCommand extends Command
 {
@@ -30,7 +26,7 @@ class VaccineScheduleCommand extends Command
      */
     public function handle()
     {
-        
+
         VaccineScheduleJob::dispatch();
     }
 }

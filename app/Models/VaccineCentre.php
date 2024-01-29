@@ -9,7 +9,8 @@ class VaccineCentre extends Model
 {
     use HasFactory;
 
-    public function users(){
+    public function users()
+    {
         return $this->hasMany(UserVaccineRegistration::class);
     }
 }

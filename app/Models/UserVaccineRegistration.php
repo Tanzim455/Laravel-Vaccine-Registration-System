@@ -8,7 +8,7 @@ use Illuminate\Database\Eloquent\Model;
 class UserVaccineRegistration extends Model
 {
     use HasFactory;
-    
+
     protected $fillable = [
         'name',
         'email',
@@ -16,9 +16,11 @@ class UserVaccineRegistration extends Model
         'nid',
         'phone_number',
         'vaccine_centre_id',
-        'scheduled_date'
+        'scheduled_date',
     ];
-    public function vaccineCentre(){
+
+    public function vaccineCentre()
+    {
         return $this->belongsTo(VaccineCentre::class);
     }
 }
