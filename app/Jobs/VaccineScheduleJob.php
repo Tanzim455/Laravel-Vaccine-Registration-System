@@ -31,25 +31,23 @@ class VaccineScheduleJob implements ShouldQueue
     public function handle(): void
     {
 
-        
-        $vaccineCentres =VaccineCentre::withUnscheduledUsers()->get();
+        $vaccineCentres = VaccineCentre::withUnscheduledUsers()->get();
         foreach ($vaccineCentres as $vaccine) {
-            if($vaccine->users->count()){
-            
-             $allIdsOfUsers = $vaccine->users->take($vaccine->daily_limit)->pluck('id')->toArray();
-              $allusers=UserVaccineRegistration::whereIn('id',$allIdsOfUsers)->get();
-     
-              foreach($allusers as $user){
-                Mail::to($user->email)->queue(new VaccineSchedule(user: $user));
-                     $user->is_scheduled = true;
-                     $user->scheduled_date=Carbon::now('Asia/Dhaka')->addDay()->format('Y-m-d');
-                     $user->save();
-              }
-             
-       
+            if ($vaccine->users->count()) {
+
+                $allIdsOfUsers = $vaccine->users->take($vaccine->daily_limit)->pluck('id')->toArray();
+                $allusers = UserVaccineRegistration::whereIn('id', $allIdsOfUsers)->get();
+
+                foreach ($allusers as $user) {
+                    Mail::to($user->email)->queue(new VaccineSchedule(user: $user));
+                    $user->is_scheduled = true;
+                    $user->scheduled_date = Carbon::now('Asia/Dhaka')->addDay()->format('Y-m-d');
+                    $user->save();
+                }
+
             }
-            
-         }
+
+        }
 
     }
 }

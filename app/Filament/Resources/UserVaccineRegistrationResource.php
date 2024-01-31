@@ -25,7 +25,7 @@ class UserVaccineRegistrationResource extends Resource
         return $form
             ->schema([
                 Select::make('vaccine_centre_id')
-                    ->relationship('vaccineCentre','name')
+                    ->relationship('vaccineCentre', 'name')
                     ->required(),
                 Forms\Components\TextInput::make('name')
                     ->required()
@@ -53,7 +53,6 @@ class UserVaccineRegistrationResource extends Resource
         return $table
             ->columns([
                 Tables\Columns\TextColumn::make('vaccineCentre.name')
-                
 
                     ->sortable(),
 
@@ -95,18 +94,18 @@ class UserVaccineRegistrationResource extends Resource
                     ),
                 Filter::make('Vaccinated')
                     ->query(fn (Builder $query): Builder => $query->where('is_scheduled', true)
-                                ->where('scheduled_date', '<', Carbon::now()->format('Y-m-d')),
+                        ->where('scheduled_date', '<', Carbon::now()->format('Y-m-d')),
 
                     ),
             ])
             ->actions([
-                            Tables\Actions\EditAction::make(),
-                        ])
+                Tables\Actions\EditAction::make(),
+            ])
             ->bulkActions([
-                            Tables\Actions\BulkActionGroup::make([
-                                Tables\Actions\DeleteBulkAction::make(),
-                            ]),
-                        ]);
+                Tables\Actions\BulkActionGroup::make([
+                    Tables\Actions\DeleteBulkAction::make(),
+                ]),
+            ]);
     }
 
     public static function getRelations(): array

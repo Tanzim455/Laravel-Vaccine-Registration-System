@@ -25,7 +25,7 @@ class UserRegistration extends Component
     {
         $validated = $this->validate();
 
-         $user = UserVaccineRegistration::create($validated);
+        $user = UserVaccineRegistration::create($validated);
         // // //Daily Limit of users preferred vaccine centre
         // // dd($user);
         // $perDayLimitOfUsersPreferredVaccineCentre = $user->vaccinecentre->daily_limit;
