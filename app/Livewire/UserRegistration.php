@@ -25,95 +25,95 @@ class UserRegistration extends Component
     {
         $validated = $this->validate();
 
-        $user = UserVaccineRegistration::create($validated);
-        // //Daily Limit of users preferred vaccine centre
-        // dd($user);
-        $perDayLimitOfUsersPreferredVaccineCentre = $user->vaccinecentre->daily_limit;
-        // dd($perDayLimitOfUsersPreferredVaccineCentre);
-        $scheduledDate = Carbon::parse($user->created_at)->addDay(1)->format('Y-m-d');
+         $user = UserVaccineRegistration::create($validated);
+        // // //Daily Limit of users preferred vaccine centre
+        // // dd($user);
+        // $perDayLimitOfUsersPreferredVaccineCentre = $user->vaccinecentre->daily_limit;
+        // // dd($perDayLimitOfUsersPreferredVaccineCentre);
+        // $scheduledDate = Carbon::parse($user->created_at)->addDay(1)->format('Y-m-d');
 
-        //Total schedule in Users preferred vaccine centre
-        $totalScheduledInThatDayOfPreferredVaccineCentre = UserVaccineRegistration::where('vaccine_centre_id', $user->vaccineCentre->id)
-            ->where('scheduled_date', $scheduledDate)
-            ->count();
-        // dd($totalScheduledInThatDayOfPreferredVaccineCentre);
-        $scheduledDateIfItsSaturday = Carbon::parse($scheduledDate)->addDay(1);
+        // //Total schedule in Users preferred vaccine centre
+        // $totalScheduledInThatDayOfPreferredVaccineCentre = UserVaccineRegistration::where('vaccine_centre_id', $user->vaccineCentre->id)
+        //     ->where('scheduled_date', $scheduledDate)
+        //     ->count();
+        // // dd($totalScheduledInThatDayOfPreferredVaccineCentre);
+        // $scheduledDateIfItsSaturday = Carbon::parse($scheduledDate)->addDay(1);
 
-        //Scheduled date if its Friday
-        $scheduledDateIfItsFriday = Carbon::parse($scheduledDate)->addDay(2);
-        //Check if the day is Thursday or Friday
-        $specificDayOfScheduledDate = Carbon::parse($scheduledDate)->format('l');
-        // $itsThursday = $specificDayOfScheduledDate === 'Thursday';
-        $itsFriday = $specificDayOfScheduledDate === 'Friday';
-        $itsSaturday = $specificDayOfScheduledDate === 'Saturday';
-        if ($totalScheduledInThatDayOfPreferredVaccineCentre < $perDayLimitOfUsersPreferredVaccineCentre) {
-            // Set the scheduled_date during user creation
-            if ($itsFriday) {
-                $scheduledDate = $scheduledDateIfItsFriday;
-            } elseif ($itsSaturday) {
-                $scheduledDate = $scheduledDateIfItsSaturday;
-            }
-            $user->update([
-                'scheduled_date' => $scheduledDate,
-            ]);
-        } else {
-            $countOfScheduledVaccineCentresbyDate = UserVaccineRegistration::select('vaccine_centre_id', 'scheduled_date')
-                ->where('vaccine_centre_id', $user->VaccineCentre->id)
-                ->where('scheduled_date', '>', Carbon::parse(Carbon::now())->format('Y-m-d'))
-                ->groupBy('vaccine_centre_id', 'scheduled_date')
-                ->selectRaw('COUNT(*) as count')
-                ->get();
+        // //Scheduled date if its Friday
+        // $scheduledDateIfItsFriday = Carbon::parse($scheduledDate)->addDay(2);
+        // //Check if the day is Thursday or Friday
+        // $specificDayOfScheduledDate = Carbon::parse($scheduledDate)->format('l');
+        // // $itsThursday = $specificDayOfScheduledDate === 'Thursday';
+        // $itsFriday = $specificDayOfScheduledDate === 'Friday';
+        // $itsSaturday = $specificDayOfScheduledDate === 'Saturday';
+        // if ($totalScheduledInThatDayOfPreferredVaccineCentre < $perDayLimitOfUsersPreferredVaccineCentre) {
+        //     // Set the scheduled_date during user creation
+        //     if ($itsFriday) {
+        //         $scheduledDate = $scheduledDateIfItsFriday;
+        //     } elseif ($itsSaturday) {
+        //         $scheduledDate = $scheduledDateIfItsSaturday;
+        //     }
+        //     $user->update([
+        //         'scheduled_date' => $scheduledDate,
+        //     ]);
+        // } else {
+        //     $countOfScheduledVaccineCentresbyDate = UserVaccineRegistration::select('vaccine_centre_id', 'scheduled_date')
+        //         ->where('vaccine_centre_id', $user->VaccineCentre->id)
+        //         ->where('scheduled_date', '>', Carbon::parse(Carbon::now())->format('Y-m-d'))
+        //         ->groupBy('vaccine_centre_id', 'scheduled_date')
+        //         ->selectRaw('COUNT(*) as count')
+        //         ->get();
 
-            foreach ($countOfScheduledVaccineCentresbyDate as $count) {
-                $found = false;
-                if ($count->count !== $perDayLimitOfUsersPreferredVaccineCentre) {
-                    $found = true;
-                    $collection = collect([]);
-                    $collection->push($count->scheduled_date);
-                    $earliest_date = $collection->min();
-                    //Update with this date
-                    $formatted_date = Carbon::parse($earliest_date)->format('Y-m-d');
-                    $user->update([
-                        'scheduled_date' => $formatted_date,
-                    ]);
+        //     foreach ($countOfScheduledVaccineCentresbyDate as $count) {
+        //         $found = false;
+        //         if ($count->count !== $perDayLimitOfUsersPreferredVaccineCentre) {
+        //             $found = true;
+        //             $collection = collect([]);
+        //             $collection->push($count->scheduled_date);
+        //             $earliest_date = $collection->min();
+        //             //Update with this date
+        //             $formatted_date = Carbon::parse($earliest_date)->format('Y-m-d');
+        //             $user->update([
+        //                 'scheduled_date' => $formatted_date,
+        //             ]);
 
-                }
+        //         }
 
-                if (! $found) {
-                    $newcollection = collect([]);
-                    $newcollection->push($count->scheduled_date);
-                    $latest_date = $newcollection->max();
-                    $scheduledDate = Carbon::parse($latest_date)->addDay(1)->format('Y-m-d');
+        //         if (! $found) {
+        //             $newcollection = collect([]);
+        //             $newcollection->push($count->scheduled_date);
+        //             $latest_date = $newcollection->max();
+        //             $scheduledDate = Carbon::parse($latest_date)->addDay(1)->format('Y-m-d');
 
-                    $specificDayOfScheduledDate = Carbon::parse($scheduledDate)->format('l');
+        //             $specificDayOfScheduledDate = Carbon::parse($scheduledDate)->format('l');
 
-                    //     //Check whether the date is Friday or Saturday
-                    $itsFriday = $specificDayOfScheduledDate === 'Friday';
-                    $itsSaturday = $specificDayOfScheduledDate === 'Saturday';
-                    //     //Add One day and avoid Friday saturday
-                    //     //Scheduled date if its Friday
-                    $scheduledDateIfItsFriday = Carbon::parse($scheduledDate)->addDay(2)->format('Y-m-d');
-                    $scheduledDateIfItsSaturday = Carbon::parse($scheduledDate)->addDay(2)->format('Y-m-d');
-                    if (! $itsFriday || ! $itsSaturday) {
-                        $user->update([
-                            'scheduled_date' => $scheduledDate,
-                        ]);
-                    }
+        //             //     //Check whether the date is Friday or Saturday
+        //             $itsFriday = $specificDayOfScheduledDate === 'Friday';
+        //             $itsSaturday = $specificDayOfScheduledDate === 'Saturday';
+        //             //     //Add One day and avoid Friday saturday
+        //             //     //Scheduled date if its Friday
+        //             $scheduledDateIfItsFriday = Carbon::parse($scheduledDate)->addDay(2)->format('Y-m-d');
+        //             $scheduledDateIfItsSaturday = Carbon::parse($scheduledDate)->addDay(2)->format('Y-m-d');
+        //             if (! $itsFriday || ! $itsSaturday) {
+        //                 $user->update([
+        //                     'scheduled_date' => $scheduledDate,
+        //                 ]);
+        //             }
 
-                    if ($itsFriday) {
-                        $user->update([
-                            'scheduled_date' => $scheduledDateIfItsFriday,
-                        ]);
-                    }
-                    if ($itsSaturday) {
-                        $user->update([
-                            'scheduled_date' => $scheduledDateIfItsSaturday,
-                        ]);
-                    }
+        //             if ($itsFriday) {
+        //                 $user->update([
+        //                     'scheduled_date' => $scheduledDateIfItsFriday,
+        //                 ]);
+        //             }
+        //             if ($itsSaturday) {
+        //                 $user->update([
+        //                     'scheduled_date' => $scheduledDateIfItsSaturday,
+        //                 ]);
+        //             }
 
-                }
-            }
-        }
+        //         }
+        //     }
+        // }
         $this->reset();
         session()->flash('success', 'You have been successfully registered.Soon you will get an email with confirmation date');
         // }

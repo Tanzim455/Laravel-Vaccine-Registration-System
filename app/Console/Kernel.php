@@ -15,11 +15,18 @@ class Kernel extends ConsoleKernel
         VaccineScheduleCommand::class,
     ];
 
+    // protected function schedule(Schedule $schedule): void
+    // {
+    //     $schedule->command('app:vaccine-schedule')->dailyAt('21:00')
+    //     ->days([0, 1, 2, 3, 4]);
+        
+    // }
     protected function schedule(Schedule $schedule): void
     {
-        $schedule->command('app:vaccine-schedule')->everyMinute();
+        $schedule->command('app:vaccine-schedule')->dailyAt('21:00')
+            ->days([0, 1, 2, 3, 4]); // 0 represents Sunday, 1 represents Monday, and so on
     }
-
+    
     /**
      * Register the commands for the application.
      */
